@@ -8,9 +8,9 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 const API_KEY = process.env.API_KEY;
 
 export async function POST(request: Request) {
-  const { username, email, password, phonenumber } = await request.json();
+  const { username, email, password } = await request.json();
 
-  if (!username || !email || !password || !phonenumber) {
+  if (!username || !email || !password) {
     return NextResponse.json(
       { msg: "Please enter all fields" },
       { status: 400 }
@@ -50,25 +50,12 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if phone number already exists
-    const [phoneRows] = await db.query(
-      "SELECT phonenumber FROM users WHERE phonenumber = ?",
-      [phonenumber]
-    );
-    if (phoneRows.length > 0) {
-      return NextResponse.json(
-        { msg: "Phone number already exists" },
-        { status: 400 }
-      );
-    }
-
     // Hash password and store user in database
     const hash = await bcrypt.hash(password, 10);
     const newUser = {
       uuid: uuidv4(),
       username,
       email,
-      phonenumber,
       password: hash,
     };
 

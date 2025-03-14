@@ -26,10 +26,9 @@ export async function GET(request: Request) {
 
   try {
     const db = await getConnection();
-    const [rows] = await db.query(
-      "SELECT coins FROM user_coins WHERE uuid = ?",
-      [uuid]
-    );
+    const [rows] = await db.query("SELECT coins FROM coins WHERE uuid = ?", [
+      uuid,
+    ]);
 
     if (rows.length === 0) {
       return NextResponse.json(
@@ -71,10 +70,9 @@ export async function POST(request: Request) {
 
   try {
     const db = await getConnection();
-    const [rows] = await db.query(
-      "SELECT coins FROM user_coins WHERE uuid = ?",
-      [uuid]
-    );
+    const [rows] = await db.query("SELECT coins FROM coins WHERE uuid = ?", [
+      uuid,
+    ]);
 
     if (rows.length === 0) {
       return NextResponse.json(
@@ -85,7 +83,7 @@ export async function POST(request: Request) {
 
     const updatedCoins = rows[0].coins + coins;
 
-    await db.query("UPDATE user_coins SET coins = ? WHERE uuid = ?", [
+    await db.query("UPDATE coins SET coins = ? WHERE uuid = ?", [
       updatedCoins,
       uuid,
     ]);
@@ -124,10 +122,9 @@ export async function DELETE(request: Request) {
 
   try {
     const db = await getConnection();
-    const [rows] = await db.query(
-      "SELECT coins FROM user_coins WHERE uuid = ?",
-      [uuid]
-    );
+    const [rows] = await db.query("SELECT coins FROM coins WHERE uuid = ?", [
+      uuid,
+    ]);
 
     if (rows.length === 0) {
       return NextResponse.json(
@@ -146,7 +143,7 @@ export async function DELETE(request: Request) {
 
     const updatedCoins = currentCoins - coins;
 
-    await db.query("UPDATE user_coins SET coins = ? WHERE uuid = ?", [
+    await db.query("UPDATE coins SET coins = ? WHERE uuid = ?", [
       updatedCoins,
       uuid,
     ]);

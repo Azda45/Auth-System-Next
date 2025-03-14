@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { login as loginService, getCurrentUser } from '../../services/authService';
+import { login as loginService, getCurrentUser } from '@/services/authService';
 import LogRegBar from '../components/LogRegBar';
 
 export default function Login() {

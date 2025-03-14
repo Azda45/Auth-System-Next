@@ -1,5 +1,3 @@
-// utils/jwtUtils.ts
-
 export const parseJwt = (token: string) => {
   try {
     const base64Url = token.split(".")[1];

@@ -1,7 +1,7 @@
 // /services/user.ts
 import axios from "axios";
 
-const API_URL = "/api/user";
+const API_URL = "/api/v1/user";
 
 // Add API Key to each request using Axios interceptor
 axios.interceptors.request.use(

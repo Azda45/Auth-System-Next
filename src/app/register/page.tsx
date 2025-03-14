@@ -1,13 +1,12 @@
 'use client'
 import React, { useState } from 'react';
-import { register } from '../../services/authService';
+import { register } from '@/services/authService';
 import axios from 'axios';
 import LogRegBar from '../components/LogRegBar';
 
 export default function Register() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
-    const [phonenumber, setPhonenumber] = useState(''); // Tambahkan state untuk phonenumber
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -25,14 +24,12 @@ export default function Register() {
             username,
             email,
             password,
-            phonenumber, // Tambahkan phonenumber ke userData
         };
 
         try {
             await register(userData);
             setUsername('');
             setEmail('');
-            setPhonenumber(''); // Reset phonenumber setelah registrasi berhasil
             setPassword('');
             setConfirmPassword('');
             setError('');
@@ -93,24 +90,6 @@ export default function Register() {
                                 className="cursor-text absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">
 
                                 Email
-                            </label>
-                        </div>
-
-                        {/* Tambahkan input untuk phonenumber */}
-                        <div className="relative mb-4">
-                            <input
-                                type="text"
-                                id="phonenumber"
-                                value={phonenumber}
-                                onChange={(e) => setPhonenumber(e.target.value)}
-                                placeholder=" "
-                                className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 dark:border-gray-600 outline-none dark:text-white dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            />
-                            <label
-                                htmlFor="phonenumber"
-                                className="cursor-text absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">
-
-                                Phone Number
                             </label>
                         </div>
 

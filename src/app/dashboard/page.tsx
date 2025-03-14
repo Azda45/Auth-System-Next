@@ -2,11 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { getCurrentUser } from '../../services/authService';
-import { parseJwt } from '../../lib/jwtParse';
-import { maskPhoneNumber } from '../../lib/maskPhone';
-import { fetchUserData } from '../../lib/fetchUser';
-import { fetchCoins } from '../../lib/fetchCoin';
+import { getCurrentUser } from '@/services/authService';
+import { parseJwt } from '@/lib/jwtParse';
+import { fetchUserData } from '@/lib/fetchUser';
+import { fetchCoins } from '@/lib/fetchCoin';
 
 const Logout = dynamic(() => import('../components/Logout'), {
     ssr: false,
@@ -18,7 +17,6 @@ const Dashboard: React.FC = () => {
     const [coins, setCoins] = useState<number | null>(null);
     const [username, setUsername] = useState<string | null>(null);
     const [email, setEmail] = useState<string | null>(null);
-    const [phonenumber, setPhonenumber] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -45,7 +43,6 @@ const Dashboard: React.FC = () => {
             if (userData) {
                 setUsername(userData.username);
                 setEmail(userData.email);
-                setPhonenumber(userData.phonenumber);
             }
             setCoins(userCoins);
         } catch (error) {
@@ -75,9 +72,6 @@ const Dashboard: React.FC = () => {
             </p>
             <p>
                 <strong>Email:</strong> {email}
-            </p>
-            <p>
-                <strong>Phone Number:</strong> {phonenumber ? maskPhoneNumber(phonenumber) : 'N/A'}
             </p>
             <p>
                 <strong>Coin Balance:</strong> {coins !== null ? coins : 'N/A'}

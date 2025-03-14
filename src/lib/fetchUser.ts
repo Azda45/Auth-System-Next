@@ -1,4 +1,3 @@
-// lib/fetchUser.ts
 import { getUserData } from "../services/userService";
 
 export const fetchUserData = async (uuid: string) => {

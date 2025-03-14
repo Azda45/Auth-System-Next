@@ -1,4 +1,3 @@
-// lib/fetchCoin.ts
 import { getCoins } from "../services/coinService";
 
 export const fetchCoins = async (uuid: string) => {

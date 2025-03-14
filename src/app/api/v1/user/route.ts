@@ -19,11 +19,9 @@ export async function GET(request: Request) {
     const uuid = searchParams.get("uuid");
     const username = searchParams.get("username");
     const email = searchParams.get("email");
-    const phonenumber = searchParams.get("phonenumber");
 
     const db = await getConnection();
-    let query =
-      "SELECT uuid, username, email, phonenumber FROM users WHERE 1=1";
+    let query = "SELECT uuid, username, email FROM users WHERE 1=1";
     let params: string[] = [];
 
     // Tambahkan kondisi WHERE berdasarkan parameter yang diberikan
@@ -40,11 +38,6 @@ export async function GET(request: Request) {
     if (email) {
       query += " AND email LIKE ?";
       params.push(`%${email}%`);
-    }
-
-    if (phonenumber) {
-      query += " AND phonenumber LIKE ?";
-      params.push(`%${phonenumber}%`);
     }
 
     const [users] = await db.query(query, params);
