@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { login as loginService, getCurrentUser } from '@/services/authService';
 import LogRegBar from '../components/LogRegBar';
+import InputField from '../components/inputField';
+
 
 export default function Login() {
     const router = useRouter();
@@ -50,39 +52,22 @@ export default function Login() {
                     </div>
                     {error && <p className='mb-5 font-medium text-red-500'>{error}</p>}
                     <form onSubmit={handleSubmit}>
-                        <div className="relative mb-4">
-                            <input
-                                type="text"
-                                value={loginInput}
-                                onChange={(e) => setLoginInput(e.target.value)}
-                                placeholder=" "
-                                required
-                                id='login'
-                                className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 dark:border-gray-600 outline-none dark:text-white dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            />
-                            <label
-                                htmlFor='login'
-                                className="cursor-text absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">
-                                Username or Email
-                            </label>
-                        </div>
 
-                        <div className="relative mb-6">
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder=" "
-                                required
-                                id='password'
-                                className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 dark:border-gray-600 outline-none dark:text-white dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            />
-                            <label
-                                htmlFor='password'
-                                className="cursor-text absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">
-                                Password
-                            </label>
-                        </div>
+                        <InputField
+                            id="login"
+                            type="text"
+                            value={loginInput}
+                            onChange={(e) => setLoginInput(e.target.value)}
+                            label="Username or Email"
+                        />
+
+                        <InputField
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            label="password"
+                        />
 
                         <button
                             type="submit"
