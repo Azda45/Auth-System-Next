@@ -87,7 +87,7 @@ export async function POST(req: Request) {
       [email, token, expiresAt]
     );
 
-    const link = `http://localhost:3000/secure-account/${token}`;
+    const link = process.env.APP_URL + `/secure-account/${token}`;
 
     // Format Waktu Reset
     const now = new Date();
