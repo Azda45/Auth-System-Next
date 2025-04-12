@@ -7,13 +7,13 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET as string;
 const API_KEY = process.env.API_KEY;
 
-async function generateUniqueUid(db: any): Promise<string> {
+async function generateUniqueUid(pool: any): Promise<string> {
   while (true) {
     const uid = Array.from({ length: 12 }, () =>
       Math.floor(Math.random() * 10)
     ).join("");
 
-    const [rows]: any = await db.query("SELECT uid FROM users WHERE uid = ?", [
+    const [rows]: any = await pool.query("SELECT uid FROM users WHERE uid = ?", [
       uid,
     ]);
     if (rows.length === 0) {
@@ -32,16 +32,15 @@ export async function POST(request: Request) {
     );
   }
 
-  // Periksa API Key dari header (opsional)
   const requestApiKey = request.headers.get("X-API-KEY");
   if (requestApiKey !== API_KEY) {
     return NextResponse.json({ msg: "Invalid API key" }, { status: 403 });
   }
 
   try {
-    const db = await getConnection();
+    const pool = await getConnection(); // get the pool
 
-    const [emailRows]: any = await db.query(
+    const [emailRows]: any = await pool.query(
       "SELECT email FROM users WHERE email = ? LIMIT 1",
       [email]
     );
@@ -52,7 +51,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const [usernameRows]: any = await db.query(
+    const [usernameRows]: any = await pool.query(
       "SELECT username FROM users WHERE username = ? LIMIT 1",
       [username]
     );
@@ -64,7 +63,7 @@ export async function POST(request: Request) {
     }
 
     const uuid = uuidv4();
-    const uid = await generateUniqueUid(db);
+    const uid = await generateUniqueUid(pool);
 
     const hash = await bcrypt.hash(password, 10);
     const newUser = {
@@ -75,8 +74,8 @@ export async function POST(request: Request) {
       password: hash,
     };
 
-    await db.query("INSERT INTO users SET ?", newUser);
-    await db.query("INSERT INTO coins (uuid, coins) VALUES (?, ?)", [
+    await pool.query("INSERT INTO users SET ?", newUser);
+    await pool.query("INSERT INTO coins (uuid, coins) VALUES (?, ?)", [
       newUser.uuid,
       0,
     ]);

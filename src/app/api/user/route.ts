@@ -20,11 +20,10 @@ export async function GET(request: Request) {
     const username = searchParams.get("username");
     const email = searchParams.get("email");
 
-    const db = await getConnection();
-    let query = "SELECT uid, username, email FROM users WHERE 1=1"; // 🛠️ Hapus uuid dari SELECT
+    const pool = await getConnection();
+    let query = "SELECT uid, username, email FROM users WHERE 1=1"; // uuid tidak disertakan di SELECT
     const params: string[] = [];
 
-    // Tetap bisa mencari berdasarkan UUID, tapi tidak menampilkan UUID dalam hasil response
     if (uuid) {
       query += " AND uuid = ?";
       params.push(uuid);
@@ -45,8 +44,7 @@ export async function GET(request: Request) {
       params.push(`%${email}%`);
     }
 
-    // Eksekusi query
-    const [users]: any = await db.query(query, params);
+    const [users]: any = await pool.query(query, params);
 
     if (users.length === 0) {
       return NextResponse.json(
@@ -55,16 +53,14 @@ export async function GET(request: Request) {
       );
     }
 
-    // Jika hanya satu user ditemukan, gunakan key "user"
     if (users.length === 1) {
       return NextResponse.json(
-        { status: 200, user: users[0] }, // ✅ Tidak ada uuid dalam respons
+        { status: 200, user: users[0] },
         { status: 200 }
       );
     }
 
-    // Jika lebih dari satu user ditemukan, gunakan key "users"
-    return NextResponse.json({ status: 200, users }, { status: 200 }); // ✅ Semua data tanpa uuid
+    return NextResponse.json({ status: 200, users }, { status: 200 });
   } catch (error) {
     console.error("Error fetching data:", error);
     return NextResponse.json(

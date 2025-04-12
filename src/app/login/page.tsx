@@ -1,23 +1,23 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { login as loginService, getCurrentUser } from '@/services/authService';
-import LogRegBar from '../components/LogRegBar';
-import InputField from '../components/inputField';
-
-
+import LogRegBar from '../../components/LogRegBar';
+import InputField from '../../components/inputField';
+import Container from '../../components/Container';
+import Button from '../../components/Button';
 export default function Login() {
     const router = useRouter();
     useEffect(() => {
         const token = getCurrentUser();
 
-        // Jika pengguna sudah login, arahkan ke dashboard
         if (token) {
             router.push('/dashboard');
         }
     }, [router]);
 
-    const [loginInput, setLoginInput] = useState(''); // Nama variabel yang jelas
+    const [loginInput, setLoginInput] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
@@ -25,7 +25,6 @@ export default function Login() {
         e.preventDefault();
 
         try {
-            // Panggil service login dengan input login dan password
             const result = await loginService({ login: loginInput, password });
 
             if (result && result.token) {
@@ -41,43 +40,45 @@ export default function Login() {
     };
 
     return (
-        <div>
-            <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
-                <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-sm border border-gray-300 dark:border-gray-600 outline outline-1 outline-gray-300 dark:outline-gray-600">
-
-                    <LogRegBar disableLogin={true} />
-
-                    <div className="flex justify-center">
-                        <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Login</h1>
-                    </div>
-                    {error && <p className='mb-5 font-medium text-red-500'>{error}</p>}
-                    <form onSubmit={handleSubmit}>
-
-                        <InputField
-                            id="login"
-                            type="text"
-                            value={loginInput}
-                            onChange={(e) => setLoginInput(e.target.value)}
-                            label="Username or Email"
-                        />
-
-                        <InputField
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            label="password"
-                        />
-
-                        <button
-                            type="submit"
-                            className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg border border-blue-700 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            Login
-                        </button>
-                    </form>
-                </div>
+        <Container>
+            <LogRegBar disableLogin={true} />
+            <div className="flex justify-center">
+                <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Login</h1>
             </div>
-        </div>
+            {error && <p className='mb-4 text-center text-red-500'>{error}</p>}
+
+            <form onSubmit={handleSubmit}>
+
+                <InputField
+                    id="login"
+                    type="text"
+                    value={loginInput}
+                    onChange={(e) => setLoginInput(e.target.value)}
+                    label="Username or Email"
+                    required={true}
+                />
+
+                <InputField
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    label="password"
+                    required={true}
+                />
+
+                <div className="text-right mb-4 mt-0.5">
+                    <a
+                        onClick={() => router.push('/reset-password')}
+                        className="text-sm text-blue-600 hover:underline cursor-pointer"
+                    >
+                        Forgot password?
+                    </a>
+                </div>
+
+                <Button type="submit" label="Login" />
+
+            </form>
+        </Container>
     );
 }

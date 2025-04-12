@@ -3,7 +3,6 @@ import { getConnection } from "@/lib/db";
 import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
-  let conn;
   try {
     const { email } = await req.json();
     if (!email) {
@@ -14,14 +13,15 @@ export async function POST(req: Request) {
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 2 * 60000);
+    const expiresAt = new Date(Date.now() + 2 * 60000); // 2 menit
 
-    conn = await getConnection();
+    const pool = await getConnection();
 
-    const [users]: any = await conn.execute(
+    const [users]: any = await pool.query(
       "SELECT email FROM users WHERE email = ?",
       [email]
     );
+
     if (users.length === 0) {
       return NextResponse.json(
         { success: false, message: "Email not found" },
@@ -29,25 +29,24 @@ export async function POST(req: Request) {
       );
     }
 
-    await conn.execute(
+    await pool.query(
       `INSERT INTO otps (email, code, expires_at, used)
-      VALUES (?, ?, ?, 0)
-      ON DUPLICATE KEY UPDATE code = VALUES(code), expires_at = VALUES(expires_at), used = 0`,
+       VALUES (?, ?, ?, 0)
+       ON DUPLICATE KEY UPDATE code = VALUES(code), expires_at = VALUES(expires_at), used = 0`,
       [email, otp, expiresAt]
     );
 
-    var transporter = nodemailer.createTransport({
-      service: "",
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST!,
+      port: parseInt(process.env.EMAIL_PORT!),
+      secure: process.env.EMAIL_SECURE === "true",
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.EMAIL_USER!,
+        pass: process.env.EMAIL_PASS!,
       },
     });
 
-    var mailOptions = {
+    const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Otp Request",
@@ -76,7 +75,5 @@ export async function POST(req: Request) {
       { success: false, message: "Internal Server Error" },
       { status: 500 }
     );
-  } finally {
-    if (conn) await conn.end();
   }
 }

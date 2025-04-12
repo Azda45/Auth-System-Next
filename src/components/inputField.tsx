@@ -6,9 +6,23 @@ interface InputFieldProps {
     value: string;
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     label: string;
+    min?: string;
+    step?: string;
+    inputMode?: 'text' | 'decimal' | 'search' | 'email' | 'tel' | 'url' | 'none' | 'numeric';
+    required?: boolean;
 }
 
-const InputField: React.FC<InputFieldProps> = ({ id, type = 'text', value, onChange, label }) => {
+const InputField: React.FC<InputFieldProps> = ({
+    id,
+    type = 'text',
+    value,
+    onChange,
+    label,
+    min,
+    step,
+    inputMode,
+    required = false,
+}) => {
     return (
         <div className="relative mb-4">
             <input
@@ -16,8 +30,11 @@ const InputField: React.FC<InputFieldProps> = ({ id, type = 'text', value, onCha
                 value={value}
                 onChange={onChange}
                 placeholder=" "
-                required
+                required={required}
                 id={id}
+                min={min}
+                step={step}
+                inputMode={inputMode}
                 className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 dark:border-gray-600 outline-none dark:text-white dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             />
             <label

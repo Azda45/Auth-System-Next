@@ -1,7 +1,7 @@
 // /service/coin.ts
 import axios from "axios";
 
-const API_URL = "/api/v1/coin";
+const API_URL = "/api/coin";
 
 // Add API Key to each request using Axios interceptor
 axios.interceptors.request.use(

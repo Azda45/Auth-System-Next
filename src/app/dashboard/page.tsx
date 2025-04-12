@@ -7,13 +7,12 @@ import { parseJwt } from '@/lib/jwtParse';
 import { fetchUserData } from '@/lib/fetchUser';
 import { fetchCoins } from '@/lib/fetchCoin';
 
-const Logout = dynamic(() => import('../components/Logout'), {
-    ssr: false,
-});
+const Logout = dynamic(() => import('../../components/Logout'), { ssr: false });
 
 const Dashboard: React.FC = () => {
     const router = useRouter();
     const [uuid, setUuid] = useState<string | null>(null);
+    const [uid, setUid] = useState<string | null>(null);
     const [coins, setCoins] = useState<number | null>(null);
     const [username, setUsername] = useState<string | null>(null);
     const [email, setEmail] = useState<string | null>(null);
@@ -21,7 +20,6 @@ const Dashboard: React.FC = () => {
 
     useEffect(() => {
         const currentUser = getCurrentUser();
-
         if (!currentUser) {
             router.push('/login');
         } else {
@@ -41,6 +39,7 @@ const Dashboard: React.FC = () => {
             ]);
 
             if (userData) {
+                setUid(userData.uid);
                 setUsername(userData.username);
                 setEmail(userData.email);
             }
@@ -51,7 +50,6 @@ const Dashboard: React.FC = () => {
             setLoading(false);
         }
     };
-
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -63,19 +61,11 @@ const Dashboard: React.FC = () => {
     return (
         <div className="p-4">
             <h1 className="text-2xl font-bold">Dashboard</h1>
+            <p><strong>UID:</strong> {uid}</p>
+            <p><strong>Username:</strong> {username}</p>
+            <p><strong>Email:</strong> {email}</p>
+            <p><strong>Coin Balance:</strong> {coins !== null ? coins : 'N/A'}</p>
             <Logout />
-            <p className="mt-4">
-                <strong>UUID:</strong> {uuid}
-            </p>
-            <p>
-                <strong>Username:</strong> {username}
-            </p>
-            <p>
-                <strong>Email:</strong> {email}
-            </p>
-            <p>
-                <strong>Coin Balance:</strong> {coins !== null ? coins : 'N/A'}
-            </p>
         </div>
     );
 }

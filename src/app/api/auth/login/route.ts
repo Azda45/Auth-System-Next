@@ -16,19 +16,19 @@ export async function POST(request: Request) {
     );
   }
 
-  // Periksa API Key dari header (opsional, jika diperlukan)
   const requestApiKey = request.headers.get("X-API-KEY");
   if (requestApiKey !== API_KEY) {
     return NextResponse.json({ msg: "Invalid API key" }, { status: 403 });
   }
 
   try {
-    const db = await getConnection();
+    const pool = await getConnection(); // get the pool
 
-    const [rows] = await db.query(
+    const [rows]: any = await pool.query(
       "SELECT * FROM users WHERE email = ? OR username = ?",
       [login, login]
     );
+
     if (rows.length === 0) {
       return NextResponse.json({ msg: "User not found" }, { status: 400 });
     }
@@ -42,6 +42,18 @@ export async function POST(request: Request) {
     const token = jwt.sign({ uuid: user.uuid }, JWT_SECRET, {
       expiresIn: "1h",
     });
+    // Capture IP and User Agent
+    const ip =
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip");
+    const userAgent = request.headers.get("user-agent");
+
+    // Insert login history
+    await pool.query(
+      "INSERT INTO login_history (user_uuid, ip_address, user_agent) VALUES (?, ?, ?)",
+      [user.uuid, ip, userAgent]
+    );
+
     return NextResponse.json({ token }, { status: 200 });
   } catch (err) {
     console.error("Error during login:", err);

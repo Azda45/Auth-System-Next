@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import { register } from '@/services/authService';
 import axios from 'axios';
-import LogRegBar from '../components/LogRegBar';
-import InputField from '../components/inputField';
+import LogRegBar from '../../components/LogRegBar';
+import InputField from '../../components/inputField';
+import Container from '../../components/Container';
+import Button from '../../components/Button';
 
 export default function Register() {
     const [username, setUsername] = useState('');
@@ -48,57 +50,58 @@ export default function Register() {
     };
 
     return (
-        <div>
-            <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
-                <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-sm border border-gray-300 dark:border-gray-600 outline outline-1 outline-gray-300 dark:outline-gray-600">
+        <Container>
 
-                    <LogRegBar disableRegister={true} />
+            <LogRegBar disableRegister={true} />
 
-                    <div className="flex justify-center">
-                        <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Register</h1>
-                    </div>
-                    {error && <p className="mb-5 font-medium text-red-500">{error}</p>}
-                    {success && <p className="mb-5 font-medium text-green-500">{success}</p>}
-                    <form onSubmit={handleSubmit} className="w-full">
-
-                        <InputField
-                            id="username"
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            label="Username"
-                        />
-                        <InputField
-                            id="email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            label="Email"
-                        />
-                        <InputField
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            label="password"
-                        />
-                        <InputField
-                            id="confirmPassword"
-                            type="password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            label="confirm password"
-                        />
-
-                        <button
-                            type="submit"
-                            className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg border border-blue-700 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            Register
-                        </button>
-                    </form>
-                </div>
+            <div className="flex justify-center">
+                <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Register</h1>
             </div>
-        </div>
+
+            {error && <p className="mb-4 text-center text-red-500">{error}</p>}
+            {success && <p className="mb-4 text-center text-green-500">{success}</p>}
+
+            <form onSubmit={handleSubmit} className="w-full">
+
+                <InputField
+                    id="username"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    label="Username"
+                    required={true}
+                />
+
+                <InputField
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    label="Email"
+                    required={true}
+                />
+
+                <InputField
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    label="password"
+                    required={true}
+                />
+
+                <InputField
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    label="confirm password"
+                    required={true}
+                />
+
+                <Button type="submit" label="Register" />
+
+            </form>
+        </Container >
     );
 };
