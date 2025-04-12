@@ -21,8 +21,7 @@ const core = new midtransClient.CoreApi({
 });
 
 export async function POST(req: Request) {
-  const conn = await getConnection();
-  const connection = await conn.getConnection();
+  const connection = await getConnection(); // Get a connection from the pool
 
   try {
     const body = await req.json();
@@ -98,6 +97,6 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   } finally {
-    connection.release();
+    connection.release(); // Release the connection back to the pool
   }
 }

@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     const pool = await getConnection();
 
     // Gunakan transaksi database untuk operasi yang terkait
-    const connection = await pool.getConnection();
+    const connection = await getConnection();
     await connection.beginTransaction();
 
     try {
