@@ -4,14 +4,16 @@ import Image from "next/image";
 import Container from "../components/Container";
 import Button from "../components/Button";
 import InputField from "../components/inputField";
-import { waitForDebugger } from "inspector";
+
 type PaymentStatus = "idle" | "pending" | "success" | "failed";
+type PaymentMethod = "qris" | "va-bca";
 
 export default function TopUpPage() {
   const [formData, setFormData] = useState({ uid: "", coins: "10" });
+  const [method, setMethod] = useState<PaymentMethod>("qris");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [qrData, setQrData] = useState<{ qr_code?: string; order_id?: string }>({});
+  const [qrData, setQrData] = useState<{ qr_code?: string; order_id?: string; va_number?: string }>({});
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("idle");
   const [paymentDetails, setPaymentDetails] = useState<{
     order_id?: string;
@@ -67,13 +69,16 @@ export default function TopUpPage() {
     setPaymentStatus("idle");
 
     try {
-      const res = await fetch("/api/topup", {
+      const endpoint = method === "qris" ? "/api/topup/qris" : "/api/topup/va-bca";
+
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid: formData.uid, coins }),
       });
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to create QR");
+      if (!res.ok) throw new Error(data.error || "Failed to create payment");
 
       setQrData(data);
       setPaymentStatus("pending");
@@ -87,6 +92,7 @@ export default function TopUpPage() {
 
   const resetForm = () => {
     setFormData({ uid: "", coins: "10" });
+    setMethod("qris");
     setPaymentStatus("idle");
     setQrData({});
     setError("");
@@ -129,6 +135,17 @@ export default function TopUpPage() {
                 setFormData({ ...formData, coins: val.toString() });
               }}
             />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+              <select
+                value={method}
+                onChange={(e) => setMethod(e.target.value as PaymentMethod)}
+                className="w-full border px-3 py-2 rounded-md"
+              >
+                <option value="qris">QRIS</option>
+                <option value="va-bca">BCA Virtual Account</option>
+              </select>
+            </div>
             <div className="text-sm text-gray-600">
               Total: <strong>{formatCurrency(amount)}</strong>
             </div>
@@ -142,20 +159,32 @@ export default function TopUpPage() {
         </div>
       )}
 
-      {paymentStatus === "pending" && qrData.qr_code && (
+      {paymentStatus === "pending" && (
         <div>
-          <h1 className="text-2xl font-bold mb-6 text-center">Scan to Pay</h1>
+          <h1 className="text-2xl font-bold mb-6 text-center">
+            {method === "qris" ? "Scan to Pay" : "VA Transfer BCA"}
+          </h1>
           <div className="mt-8 text-center">
-            <div className="w-64 h-64 relative mx-auto">
-              <Image
-                src={qrData.qr_code}
-                alt="QR Code"
-                fill
-                className="object-contain"
-                unoptimized
-              />
-            </div>
-            <p className="mt-2">Total: {formatCurrency(amount)}</p>
+            {method === "qris" && qrData.qr_code && (
+              <div className="w-64 h-64 relative mx-auto">
+                <Image
+                  src={qrData.qr_code}
+                  alt="QR Code"
+                  fill
+                  className="object-contain"
+                  unoptimized
+                />
+              </div>
+            )}
+
+            {method === "va-bca" && qrData.va_number && (
+              <div className="text-lg font-semibold">
+                VA Number: <br />
+                <span className="text-2x tracking-wider text-blue-700">{qrData.va_number}</span>
+              </div>
+            )}
+
+            <p className="mt-4">Total: {formatCurrency(amount)}</p>
             <div className="mt-2 text-blue-700 text-sm animate-pulse">
               Waiting for payment...
             </div>
